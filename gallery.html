@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Галерея Паркового | Официальный сайт Парковского сельского поселения</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Добавлен фавикон -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <style>
+        /* Основные стили галереи */
+        .gallery-section {
+            padding: 4rem 0;
+            background-color: var(--white);
+        }
+        
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .gallery-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .gallery-title h2 {
+            font-size: 2rem;
+            color: var(--green-dark);
+            padding-bottom: 10px;
+            position: relative;
+        }
+        
+        .gallery-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, var(--green-medium), var(--yellow-medium));
+        }
+        
+        .gallery-3d {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .gallery-item {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--green-medium);
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: var(--gray-light);
+        }
+        
+        .canvas-container canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .item-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .item-content h3 {
+            color: var(--green-dark);
+            margin-bottom: 0.8rem;
+        }
+        
+        .item-content p {
+            color: var(--brown-medium);
+            margin-bottom: 0;
+            flex-grow: 1;
+        }
+        
+        .instructions {
+            font-size: 0.85rem;
+            color: var(--brown-medium);
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        /* Стили для подвала */
+        footer {
+            background: linear-gradient(135deg, var(--green-dark), var(--brown-dark));
+            color: var(--white);
+            padding: 2rem 0;
+            text-align: center; /* Центрирование текста */
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Адаптация для мобильных */
+        @media (max-width: 768px) {
+            .gallery-item {
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <img src="images/logo.png" alt="Герб посёлка Паркового">
+                <div class="logo-text">
+                    <h1>Мой Парковый</h1>
+                    <p>Официальный сайт Парковского сельского поселения</p>
+                </div>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="mainNav">
+                <ul class="nav-links">
+                    <li><a href="index.html#home">Главная</a></li>
+                    <li><a href="index.html#about">О посёлке</a></li>
+                    <li><a href="index.html#services">Услуги</a></li>
+                    <li><a href="news.html">Новости</a></li>
+                    <li><a href="index.html#events">Мероприятия</a></li>
+                    <li><a href="index.html#contact">Контакты</a></li>
+<li><a href="galleryphoto.html">Фотогалерея</a></li>
+                    <li><a href="gallery.html">3D Галерея</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 3D Галерея -->
+    <section class="gallery-section" id="gallery">
+        <div class="container gallery-container">
+            <div class="gallery-title">
+                <h2>3D Галерея Паркового</h2>
+                <p>Исследуйте элементы благоустройства нашего посёлка</p>
+            </div>
+            
+            <div class="gallery-3d">
+                <!-- Дерево -->
+                <div class="gallery-item">
+                    <div class="canvas-container" id="treeContainer"></div>
+                    <div class="item-content">
+                        <h3>Парковое дерево</h3>
+                        <p>Традиционные деревья, украшающие улицы нашего посёлка. Мы высаживаем только устойчивые к местному климату породы.</p>
+                        <p class="instructions">Нажмите и перетащите для вращения. Колесо мыши для масштабирования.</p>
+                    </div>
+                </div>
+                
+                <!-- Лавочка -->
+                <div class="gallery-item">
+                    <div class="canvas-container" id="benchContainer"></div>
+                    <div class="item-content">
+                        <h3>Уютная лавочка</h3>
+                        <p>Комфортные места отдыха для жителей, установленные в парках и на улицах Паркового.</p>
+                        <p class="instructions">Нажмите и перетащите для вращения. Колесо мыши для масштабирования.</p>
+                    </div>
+                </div>
+                
+                <!-- Фонарь -->
+                <div class="gallery-item">
+                    <div class="canvas-container" id="lampContainer"></div>
+                    <div class="item-content">
+                        <h3>Вечерний фонарь</h3>
+                        <p>Современное энергоэффективное освещение, создающее уютную атмосферу в вечернее время.</p>
+                        <p class="instructions">Нажмите и перетащите для вращения. Колесо мыши для масштабирования.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="index.html" class="btn">Вернуться на главную</a>
+            </div>
+        </div>
+    </section>
+
+<footer>
+        <div class="footer-container">
+            <p>© 2025 Администрация Парковского сельского поселения</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Гарантированная инициализация 3D сцен
+        document.addEventListener('DOMContentLoaded', function() {
+            // Функция создания 3D объекта
+            function create3DScene(containerId, type) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                
+                // Сцена
+                const scene = new THREE.Scene();
+                scene.background = null;
+                
+                // Камера
+                const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+                camera.position.z = 5;
+                
+                // Рендерер
+                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(width, height);
+                renderer.setClearColor(0x000000, 0); // Прозрачный фон
+                container.appendChild(renderer.domElement);
+                
+                // Управление
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.25;
+                
+                // Освещение
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                scene.add(ambientLight);
+                
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                directionalLight.position.set(1, 1, 1);
+                scene.add(directionalLight);
+                
+                // Создание объекта
+                let object;
+                
+                if (type === 'tree') {
+                    // Ствол
+                    const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.5, 2, 8);
+                    const trunkMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+                    const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+                    trunk.position.y = 1;
+                    
+                    // Крона
+                    const leavesGeometry = new THREE.SphereGeometry(1.5, 16, 16);
+                    const leavesMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0x2ECC71,
+                        transparent: true,
+                        opacity: 0.9
+                    });
+                    const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+                    leaves.position.y = 3;
+                    
+                    object = new THREE.Group();
+                    object.add(trunk);
+                    object.add(leaves);
+                }
+                else if (type === 'bench') {
+                    // Лавочка
+                    const seatGeometry = new THREE.BoxGeometry(2, 0.2, 0.5);
+                    const seatMaterial = new THREE.MeshPhongMaterial({ color: 0xA0522D });
+                    const seat = new THREE.Mesh(seatGeometry, seatMaterial);
+                    seat.position.y = 0.5;
+                    
+                    const backGeometry = new THREE.BoxGeometry(2, 0.5, 0.1);
+                    const back = new THREE.Mesh(backGeometry, seatMaterial);
+                    back.position.set(0, 0.9, -0.2);
+                    back.rotation.x = -Math.PI / 6;
+                    
+                    const legGeometry = new THREE.BoxGeometry(0.1, 0.5, 0.1);
+                    const legMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+                    
+                    const legs = [];
+                    for (let i = 0; i < 4; i++) {
+                        const leg = new THREE.Mesh(legGeometry, legMaterial);
+                        leg.position.set(
+                            i % 2 === 0 ? -0.9 : 0.9,
+                            0.25,
+                            i < 2 ? 0.2 : -0.2
+                        );
+                        legs.push(leg);
+                    }
+                    
+                    object = new THREE.Group();
+                    object.add(seat);
+                    object.add(back);
+                    legs.forEach(leg => object.add(leg));
+                }
+                else if (type === 'lamp') {
+                    // Фонарь
+                    const poleGeometry = new THREE.CylinderGeometry(0.1, 0.1, 3, 16);
+                    const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x7F8C8D });
+                    const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+                    pole.position.y = 1.5;
+                    
+                    const topGeometry = new THREE.BoxGeometry(0.6, 0.3, 0.6);
+                    const topMaterial = new THREE.MeshPhongMaterial({ color: 0xBDC3C7 });
+                    const top = new THREE.Mesh(topGeometry, topMaterial);
+                    top.position.y = 3.2;
+                    
+                    const lightGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+                    const lightMaterial = new THREE.MeshPhongMaterial({ 
+                        color: 0xF1C40F,
+                        emissive: 0xF1C40F,
+                        emissiveIntensity: 0.5
+                    });
+                    const light = new THREE.Mesh(lightGeometry, lightMaterial);
+                    light.position.y = 3.35;
+                    
+                    const pointLight = new THREE.PointLight(0xF1C40F, 1, 5);
+                    pointLight.position.set(0, 3.35, 0);
+                    scene.add(pointLight);
+                    
+                    object = new THREE.Group();
+                    object.add(pole);
+                    object.add(top);
+                    object.add(light);
+                }
+                
+                scene.add(object);
+                
+                // Центрирование объекта
+                const box = new THREE.Box3().setFromObject(object);
+                const center = box.getCenter(new THREE.Vector3());
+                object.position.sub(center);
+                
+                // Анимация
+                function animate() {
+                    requestAnimationFrame(animate);
+                    controls.update();
+                    renderer.render(scene, camera);
+                }
+                
+                animate();
+                
+                // Реакция на изменение размера
+                window.addEventListener('resize', function() {
+                    const newWidth = container.clientWidth;
+                    const newHeight = container.clientHeight;
+                    
+                    camera.aspect = newWidth / newHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(newWidth, newHeight);
+                });
+            }
+            
+            // Инициализация всех сцен
+            create3DScene('treeContainer', 'tree');
+            create3DScene('benchContainer', 'bench');
+            create3DScene('lampContainer', 'lamp');
+        });
+    </script>
+</body>
+</html>
